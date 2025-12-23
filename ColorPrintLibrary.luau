@@ -1,5 +1,6 @@
 local PrintLib = {}
 --[[
+		-- Note: This was been ai optimizated btw, dont worry abt small letters in the locals
 
 		Examples
 		Color Method is Color3.fromRGB()
