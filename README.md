@@ -8,6 +8,20 @@ local PrintLibCode = game:HttpGet("https://raw.githubusercontent.com/Underssky/C
 local PrintLib = loadstring(PrintLibCode)()
 ```
 
+### ExampleOfPrints
+```lua
+local libraryCode = game:HttpGet("https://raw.githubusercontent.com/Underssky/ColoredPrintsLib/refs/heads/main/ColorPrintLibrary.luau")
+local PrintLib = loadstring(libraryCode)()
+
+PrintLib.CPrint("Hi! I am a Colored Text!", Color3.fromRGB(55, 255, 0))
+PrintLib.RPrint("Hey!! I am a Rainbow Text!", 0.5)
+PrintLib.SPrint("Look at this Smooth Switching Colors!", 1, Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255))
+PrintLib.SIPrint("And Instant Switching Colors!", 0.5, Color3.fromRGB(255, 255, 0), Color3.fromRGB(0, 255, 255), Color3.fromRGB(255, 0, 255))
+PrintLib.GPrint("Moving Gradient Text!!!", 0.5, Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255))
+PrintLib.GSPrint("Static Gradient Text!!!!!!!!!", 0, Color3.fromRGB(0, 255, 255), Color3.fromRGB(255, 0, 255))
+```
+
+
 # How to USE?
 
 - Colored print
