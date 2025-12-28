@@ -1,249 +1,254 @@
 local PrintLib = {}
+--[[
+		-- Note: This was been ai optimizated btw, dont worry abt small letters in the locals
 
-function PrintLib.CPrint(Text, Color3)
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
+		Examples
+		Color Method is Color3.fromRGB()
+		Speed counting in seconds
+		
+		
+	PrintLib.CPrint(string, color)   ---------------------- Colored print
+	
+	PrintLib.RPrint(string, speed) ---------------------- Rainbow print (rainbow speed)
+	
+	PrintLib.SPrint(string, speed, color1 - ∞) -------- Tween Color Switch 
+	
+	PrintLib.SIPrint(string, speed, color1 - ∞) ------- Instant Color Switch 
+	
+	PrintLib.GPrint(string, speed, col1 - ∞)  --------- Tween Gradient
+	
+	PrintLib.GSPrint(string, 0, col1 - ∞) -------------- Static Gradient
+	
+--]]
+function PrintLib.CPrint(text, color3)
+	local key = string.char(1) .. tostring(math.random(1000, 9999)) 
+	local fullText = tostring(text) .. key
+	print(fullText)
 	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local Start = tick()
-		while not Label and tick() - Start < 2 do
-			local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-			if Console then
-				for _, V in pairs(Console:GetDescendants()) do
-					if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-						Label = V
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then 
+						label = v
 						break
 					end
 				end
 			end
-			if not Label then task.wait() end
+			if not label then task.wait() end
 		end
-		if Label then
-			Label.RichText = true
-			local OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-			local R = math.floor(Color3.R * 255)
-			local G = math.floor(Color3.G * 255)
-			local B = math.floor(Color3.B * 255)
-			Label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, OriginalTextWithoutKey)
-		end
-	end)
-end
-
-function PrintLib.RPrint(Text, Speed)
-	Speed = Speed or 1
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
-	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local OriginalTextWithoutKey = ""
-		local Hue = 0
-		while true do
-			if not Label then
-				local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-				if Console then
-					for _, V in pairs(Console:GetDescendants()) do
-						if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-							Label = V
-							Label.RichText = true
-							OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-							break
-						end
-					end
-				end
-			end
-			if Label and Label.Parent then
-				local Dt = task.wait()
-				Hue = (Hue + Speed * Dt) % 1
-				local Color = Color3.fromHSV(Hue, 1, 1)
-				local R = math.floor(Color.R * 255)
-				local G = math.floor(Color.G * 255)
-				local B = math.floor(Color.B * 255)
-				Label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, OriginalTextWithoutKey)
-			else
-				Label = nil
-				task.wait(1)
-			end
+		if label then
+			label.RichText = true
+			local r = math.floor(color3.R * 255)
+			local g = math.floor(color3.G * 255)
+			local b = math.floor(color3.B * 255)
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", r, g, b, originalTextWithoutKey)
 		end
 	end)
 end
-
-function PrintLib.SPrint(Text, Speed, ...)
-	Speed = Speed or 1
-	local Colors = {...}
-	if #Colors == 0 then return end
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
+function PrintLib.RPrint(text, speed)
+	speed = speed or 1
+	local key = string.char(1) .. tostring(math.random(1000, 9999))
+	local fullText = tostring(text) .. key
+	print(fullText)
 	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local OriginalTextWithoutKey = ""
-		local ColorIndex = 1
-		local TweenService = game:GetService("TweenService")
-		local TweenInfo = TweenInfo.new(Speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true, 0)
-		while true do
-			if not Label then
-				local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-				if Console then
-					for _, V in pairs(Console:GetDescendants()) do
-						if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-							Label = V
-							Label.RichText = true
-							OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-							break
-						end
-					end
-				end
-			end
-			if Label and Label.Parent then
-				local NextColorIndex = (ColorIndex % #Colors) + 1
-				local TargetColor = Colors[NextColorIndex]
-				local Tween = TweenService:Create(Label, TweenInfo, {TextColor3 = TargetColor})
-				Tween:Play()
-				task.wait(Speed)
-				ColorIndex = NextColorIndex
-			else
-				Label = nil
-				task.wait(1)
-			end
-		end
-	end)
-end
-
-function PrintLib.SIPrint(Text, Speed, ...)
-	Speed = Speed or 1
-	local Colors = {...}
-	if #Colors == 0 then return end
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
-	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local OriginalTextWithoutKey = ""
-		local ColorIndex = 1
-		while true do
-			if not Label then
-				local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-				if Console then
-					for _, V in pairs(Console:GetDescendants()) do
-						if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-							Label = V
-							Label.RichText = true
-							OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-							break
-						end
-					end
-				end
-			end
-			if Label and Label.Parent then
-				task.wait(Speed)
-				local Color3 = Colors[ColorIndex]
-				local R = math.floor(Color3.R * 255)
-				local G = math.floor(Color3.G * 255)
-				local B = math.floor(Color3.B * 255)
-				Label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, OriginalTextWithoutKey)
-				ColorIndex = (ColorIndex % #Colors) + 1
-			else
-				Label = nil
-				task.wait(1)
-			end
-		end
-	end)
-end
-
-function PrintLib.GPrint(Text, RotationSpeed, ...)
-	RotationSpeed = RotationSpeed or 1
-	local Colors = {...}
-	if #Colors == 0 then return end
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
-	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local OriginalTextWithoutKey = ""
-		while true do
-			if not Label then
-				local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-				if Console then
-					for _, V in pairs(Console:GetDescendants()) do
-						if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-							Label = V
-							Label.RichText = true
-							OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-							break
-						end
-					end
-				end
-			end
-			if Label and Label.Parent then
-				local Dt = task.wait()
-				local GradientText = ""
-				local TimeOffset = tick() * RotationSpeed
-				for I = 1, utf8.len(OriginalTextWithoutKey) do
-					local Progress = (I - 1) / (utf8.len(OriginalTextWithoutKey) - 1)
-					local AnimatedProgress = (Progress + TimeOffset) % 1
-					local ColorIndex = math.floor(AnimatedProgress * (#Colors - 1)) + 1
-					local NextColorIndex = math.min(ColorIndex + 1, #Colors)
-					local Blend = (AnimatedProgress * (#Colors - 1)) - (ColorIndex - 1)
-					local BlendedColor = Colors[ColorIndex]:Lerp(Colors[NextColorIndex], Blend)
-					local R = math.floor(BlendedColor.R * 255)
-					local G = math.floor(BlendedColor.G * 255)
-					local B = math.floor(BlendedColor.B * 255)
-					GradientText = GradientText .. string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, utf8.sub(OriginalTextWithoutKey, I, I))
-				end
-				Label.Text = GradientText
-			else
-				Label = nil
-				task.wait(1)
-			end
-		end
-	end)
-end
-
-function PrintLib.GSPrint(Text, Rotation, ...)
-	local Colors = {...}
-	if #Colors == 0 then return end
-	local UniqueId = string.rep(string.char(math.random(1, 31)), 5)
-	local FullText = tostring(Text) .. UniqueId
-	print(FullText)
-	task.spawn(function()
-		local Label = nil
-		local CoreGui = game:GetService("CoreGui")
-		local Start = tick()
-		while not Label and tick() - Start < 2 do
-			local Console = CoreGui:FindFirstChild("DevConsoleMaster")
-			if Console then
-				for _, V in pairs(Console:GetDescendants()) do
-					if V:IsA("TextLabel") and string.find(V.Text, UniqueId, 1, true) then
-						Label = V
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then
+						label = v
 						break
 					end
 				end
 			end
-			if not Label then task.wait() end
+			if not label then task.wait() end
 		end
-		if Label then
-			Label.RichText = true
-			local OriginalTextWithoutKey = string.gsub(Label.Text, UniqueId, "")
-			local GradientText = ""
-			for I = 1, utf8.len(OriginalTextWithoutKey) do
-				local Progress = (utf8.len(OriginalTextWithoutKey) > 1) and (I - 1) / (utf8.len(OriginalTextWithoutKey) - 1) or 0
-				local ColorIndex = math.floor(Progress * (#Colors - 1)) + 1
-				local NextColorIndex = math.min(ColorIndex + 1, #Colors)
-				local Blend = (Progress * (#Colors - 1)) - (ColorIndex - 1)
-				local BlendedColor = Colors[ColorIndex]:Lerp(Colors[NextColorIndex], Blend)
-				local R = math.floor(BlendedColor.R * 255)
-				local G = math.floor(BlendedColor.G * 255)
-				local B = math.floor(BlendedColor.B * 255)
-				GradientText = GradientText .. string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, utf8.sub(OriginalTextWithoutKey, I, I))
+		if label then
+			label.RichText = true
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			local hue = 0
+			while task.wait() do
+				hue = (hue + speed * task.wait()) % 1
+				local color3 = Color3.fromHSV(hue, 1, 1)
+				local r = math.floor(color3.R * 255)
+				local g = math.floor(color3.G * 255)
+				local b = math.floor(color3.B * 255)
+				label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", r, g, b, originalTextWithoutKey)
 			end
-			Label.Text = GradientText
+		end
+	end)
+end
+function PrintLib.SPrint(text, speed, ...)
+	speed = speed or 1
+	local colors = {...}
+	if #colors == 0 then return end
+	local key = string.char(1) .. tostring(math.random(1000, 9999))
+	local fullText = tostring(text) .. key
+	print(fullText)
+	task.spawn(function()
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then
+						label = v
+						break
+					end
+				end
+			end
+			if not label then task.wait() end
+		end
+		if label then
+			label.RichText = true
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			local colorIndex = 1
+			local tweenService = game:GetService("TweenService")
+			local tweenInfo = TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true, 0)
+			local targetColor = colors[colorIndex]
+			while task.wait() do
+				local nextColorIndex = (colorIndex % #colors) + 1
+				targetColor = colors[nextColorIndex]
+				local tween = tweenService:Create(label, tweenInfo, {TextColor3 = targetColor})
+				tween:Play()
+				task.wait(speed)
+				colorIndex = nextColorIndex
+			end
+		end
+	end)
+end
+function PrintLib.SIPrint(text, speed, ...)
+	speed = speed or 1
+	local colors = {...}
+	if #colors == 0 then return end
+	local key = string.char(1) .. tostring(math.random(1000, 9999))
+	local fullText = tostring(text) .. key
+	print(fullText)
+	task.spawn(function()
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then
+						label = v
+						break
+					end
+				end
+			end
+			if not label then task.wait() end
+		end
+		if label then
+			label.RichText = true
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			local colorIndex = 1
+			while task.wait(speed) do
+				local color3 = colors[colorIndex]
+				local r = math.floor(color3.R * 255)
+				local g = math.floor(color3.G * 255)
+				local b = math.floor(color3.B * 255)
+				label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", r, g, b, originalTextWithoutKey)
+				colorIndex = (colorIndex % #colors) + 1
+			end
+		end
+	end)
+end
+function PrintLib.GPrint(text, rotationSpeed, ...)
+	rotationSpeed = rotationSpeed or 1
+	local colors = {...}
+	if #colors == 0 then return end
+	local key = string.char(1) .. tostring(math.random(1000, 9999))
+	local fullText = tostring(text) .. key
+	print(fullText)
+	task.spawn(function()
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then
+						label = v
+						break
+					end
+				end
+			end
+			if not label then task.wait() end
+		end
+		if label then
+			label.RichText = true
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			while task.wait() do
+				local gradientText = ""
+				local timeOffset = tick() * rotationSpeed
+				for i = 1, #originalTextWithoutKey do
+					local progress = (i - 1) / (#originalTextWithoutKey - 1)
+					local animatedProgress = (progress + timeOffset) % 1
+					local colorIndex = math.floor(animatedProgress * (#colors - 1)) + 1
+					local nextColorIndex = math.min(colorIndex + 1, #colors)
+					local blend = (animatedProgress * (#colors - 1)) - (colorIndex - 1)
+					local blendedColor = colors[colorIndex]:Lerp(colors[nextColorIndex], blend)
+					local r = math.floor(blendedColor.R * 255)
+					local g = math.floor(blendedColor.G * 255)
+					local b = math.floor(blendedColor.B * 255)
+					gradientText = gradientText .. string.format("<font color='rgb(%d,%d,%d)'>%s</font>", r, g, b, string.sub(originalTextWithoutKey, i, i))
+				end
+				label.Text = gradientText
+			end
+		end
+	end)
+end
+function PrintLib.GSPrint(text, rotation, ...)
+	local colors = {...}
+	if #colors == 0 then return end
+	local key = string.char(1) .. tostring(math.random(1000, 9999))
+	local fullText = tostring(text) .. key
+	print(fullText)
+	task.spawn(function()
+		local label = nil
+		local coreGui = game:GetService("CoreGui")
+		local start = tick()
+		while not label and tick() - start < 2 do
+			local console = coreGui:FindFirstChild("DevConsoleMaster")
+			if console then
+				for _, v in pairs(console:GetDescendants()) do
+					if v:IsA("TextLabel") and string.find(v.Text, key, 1, true) then
+						label = v
+						break
+					end
+				end
+			end
+			if not label then task.wait() end
+		end
+		if label then
+			label.RichText = true
+			local originalTextWithoutKey = string.gsub(label.Text, key, "")
+			local gradientText = ""
+			for i = 1, #originalTextWithoutKey do
+				local progress = (#originalTextWithoutKey > 1) and (i - 1) / (#originalTextWithoutKey - 1) or 0
+				local colorIndex = math.floor(progress * (#colors - 1)) + 1
+				local nextColorIndex = math.min(colorIndex + 1, #colors)
+				local blend = (progress * (#colors - 1)) - (colorIndex - 1)
+				local blendedColor = colors[colorIndex]:Lerp(colors[nextColorIndex], blend)
+				local r = math.floor(blendedColor.R * 255)
+				local g = math.floor(blendedColor.G * 255)
+				local b = math.floor(blendedColor.B * 255)
+				gradientText = gradientText .. string.format("<font color='rgb(%d,%d,%d)'>%s</font>", r, g, b, string.sub(originalTextWithoutKey, i, i))
+			end
+			label.Text = gradientText
 		end
 	end)
 end
