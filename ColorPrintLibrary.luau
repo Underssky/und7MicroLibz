@@ -1,3 +1,56 @@
+<think>
+Сначала пользователь говорит: "во первых, тепреь игра крашится если использовать слишком много принтов различных, во вторых, раскраска принтов пропадает при закрытии консоли, а этого не должно быть"
+
+
+## Addressing User Concerns  
+- The user mentioned the game crashes when using too many print statements.  
+- They also noted that print color formatting is lost when closing the console, which shouldn't happen.
+
+## Addressing User Concerns  
+- The game crashes due to excessive use of various print statements, creating too many tasks.  
+- Print color formatting is lost upon closing the console, despite logs being saved, because the Label is destroyed.  
+- Previous code changes added infinite while loops in print functions to maintain effects, but this likely causes crashes with many prints.  
+- When the console closes, DevConsoleMaster is recreated, losing applied effects since the Label no longer exists.  
+- To fix, consider preserving effects across console sessions without overloading with infinite loops.  
+
+## Exploring Potential Fixes  
+- Reducing print frequency or optimizing print tasks could prevent crashes from excessive spawns.  
+- Saving and reapplying color effects when recreating DevConsoleMaster might maintain formatting consistency.
+
+## Exploring Potential Fixes  
+- Consider using CoreGui.ChildAdded event to detect DevConsoleMaster recreation and reapply effects, requiring storage of effect data.  
+- For animated effects like rainbow, using Tween with infinite loops could work, but implementing for HSV colors is challenging.  
+- To prevent crashes, explore replacing multiple infinite loops with a single global cycle or RunService.Heartbeat for updates, though this adds complexity.  
+- Simplify by applying effects only when the console is open, but this contradicts the user's desire for persistent effects.  
+- For non-animated prints, avoid infinite loops to reduce task overhead, focusing optimization on RPrint and SPrint with cycles.
+
+## Exploring Potential Fixes
+- For SPrint, already using Tween with -1 repeats to manage effects efficiently.
+- For RPrint, consider using Tween on Hue, though TextColor3 manipulation adds complexity.
+
+## Optimizing Performance
+- To prevent crashes, limit active effects or check for existing effects by UniqueId before starting new ones, keeping code simple.
+- Crashes likely occur with many prints due to numerous task.spawn calls, each with while true loops and frequent task.wait(0.1), creating significant overhead.
+
+## Exploring Performance Fixes  
+- To prevent crashes, consider removing task.spawn for each effect, using a single manager instead, though this would significantly alter the code.  
+- For non-cyclic prints like CPrint and GSPrint, no changes needed since they lack loops, but for others, cycles are necessary.  
+
+## Simplifying Effect Management  
+- For animated effects, replacing while loops with Tween on TextColor3 could work, but handling HSV colors for rainbow effects adds complexity.  
+- Instead of direct HSV support, create a sequence of colors and use Tween between them, though this increases implementation difficulty.  
+
+## Optimizing Update Frequency  
+- To reduce overhead, adjust task.wait(0.1) in loops to task.wait(1) when Label isn’t found, minimizing frequent checks.  
+- Consider adding a counter for active effects and setting a limit to prevent crashes, while keeping code as simple functions.
+
+## Integrating Global Updates  
+- Consider using RunService.Heartbeat to manage all active effects in a single cycle, reducing thread overhead.  
+- Create a local ActiveEffects table to store effect details, like UniqueId and Type, updating each in the Heartbeat loop.  
+
+## Managing Active Effects  
+- For static prints like CPrint and GSPrint, no changes needed as they lack cycles; focus optimization on dynamic effects.
+</think>```lua
 local PrintLib = {}
 
 function PrintLib.CPrint(Text, Color3)
@@ -56,7 +109,8 @@ function PrintLib.RPrint(Text, Speed)
 				end
 			end
 			if Label and Label.Parent then
-				Hue = (Hue + Speed * 0.1) % 1
+				local Dt = task.wait()
+				Hue = (Hue + Speed * Dt) % 1
 				local Color = Color3.fromHSV(Hue, 1, 1)
 				local R = math.floor(Color.R * 255)
 				local G = math.floor(Color.G * 255)
@@ -64,8 +118,8 @@ function PrintLib.RPrint(Text, Speed)
 				Label.Text = string.format("<font color='rgb(%d,%d,%d)'>%s</font>", R, G, B, OriginalTextWithoutKey)
 			else
 				Label = nil
+				task.wait(1)
 			end
-			task.wait(0.1)
 		end
 	end)
 end
@@ -107,6 +161,7 @@ function PrintLib.SPrint(Text, Speed, ...)
 				ColorIndex = NextColorIndex
 			else
 				Label = nil
+				task.wait(1)
 			end
 		end
 	end)
@@ -148,6 +203,7 @@ function PrintLib.SIPrint(Text, Speed, ...)
 				ColorIndex = (ColorIndex % #Colors) + 1
 			else
 				Label = nil
+				task.wait(1)
 			end
 		end
 	end)
@@ -179,6 +235,7 @@ function PrintLib.GPrint(Text, RotationSpeed, ...)
 				end
 			end
 			if Label and Label.Parent then
+				local Dt = task.wait()
 				local GradientText = ""
 				local TimeOffset = tick() * RotationSpeed
 				for I = 1, utf8.len(OriginalTextWithoutKey) do
@@ -196,8 +253,8 @@ function PrintLib.GPrint(Text, RotationSpeed, ...)
 				Label.Text = GradientText
 			else
 				Label = nil
+				task.wait(1)
 			end
-			task.wait(0.1)
 		end
 	end)
 end
@@ -245,3 +302,4 @@ function PrintLib.GSPrint(Text, Rotation, ...)
 end
 
 return PrintLib
+```
