@@ -4,12 +4,12 @@
 
 # How to REQUIRE() ?
 ```lua
-local PLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/ColoredPrintsLib/refs/heads/main/ColorPLibrary.luau"))()
+local PLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/ColorPLibrary.luau"))()
 ```
 
 ### ExampleOfPrints (So ai killed smooth switching colors i will probaly fix ittttt)
 ```lua
-local libraryCode = game:HttpGet("https://raw.githubusercontent.com/Underssky/ColoredPrintsLib/refs/heads/main/ColorPLibrary.luau")
+local libraryCode = game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/ColorPLibrary.luau")
 local PLib = loadstring(libraryCode)()
 
 PLib.CPrint("Hi! I am a Colored Text!", Color3.fromRGB(55, 255, 0))
