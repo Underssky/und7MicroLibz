@@ -39,13 +39,14 @@ function Base64.encode(data)
 end
 
 function Base64.StringTable(t, indent)
+	local Baze64 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/Base64Tables.luau"))()
 	indent = indent or ""
 	local result = "{\n"
 	for key, value in pairs(t) do
 		local keyStr = tostring(key)
 		local valstring
 		if type(value) == "table" then
-			valstring = Base64.StringTable(value, indent .. "    ")
+			valstring = Baze64.StringTable(value, indent .. "    ")
 		elseif type(value) == "string" then
 			valstring = '"' .. value .. '"'
 		else
@@ -59,19 +60,21 @@ end
 
 
 function Base64.DeObfTable(n, t) -- How many times you ofbuscating, Your Obfuscated String
+	local Baze64 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/Base64Tables.luau"))()
 	local vN = math.round(n)
 	local decoded = t
 	for i = 1, vN do
-		decoded = Base64.decode(decoded)
+		decoded = Baze64.decode(decoded)
 	end
 	return decoded
 end
 
 function Base64.ObfTable(n, t) -- How many times you ofbuscating, Your table
+	local Baze64 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/Base64Tables.luau"))()
 	local vN = math.round(n)
-	local encoded = Base64.StringTable(t)
+	local encoded = Baze64.StringTable(t)
 	for i = 1, vN do
-		encoded = Base64.encode(encoded)
+		encoded = Baze64.encode(encoded)
 	end
 	return encoded
 end
