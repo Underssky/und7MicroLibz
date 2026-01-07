@@ -52,3 +52,30 @@ PLib.GPrint(string, speed, col1 - ∞)
 ```lua
 PLib.GSPrint(string, 0, col1 - ∞)
 ```
+
+
+# ⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢⅢ
+
+
+# Base64Tables
+
+## so, its can obf\deobf string to base64 & obf\deobf STRINGET table to base64
+
+# How to REQUIRE() ?
+```lua
+local Base64lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/Base64Tables.luau"))()
+```
+
+### Examplez
+```lua
+local Base64lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/und7MicroLibz/refs/heads/main/Base64Tables.luau"))()
+
+Base64lib.encode(data) --string
+
+Base64lib.decode(data) --string
+
+Base64.StringTable(t, indent) -table, nil
+
+Base64.ObfTable(n, t) --How many times you ofbuscating, Your Obfuscated String, table
+Base64.DeObfTable(n, t) --How many times you ofbuscating, Your Obfuscated String, table
+```
