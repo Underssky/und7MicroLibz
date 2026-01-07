@@ -7,7 +7,7 @@
 local PLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Underssky/ColoredPrintsLib/refs/heads/main/ColorPLibrary.luau"))()
 ```
 
-### ExampleOfPrints (So ai killed smooth switching colors i will fix it tomorrow)
+### ExampleOfPrints (So ai killed smooth switching colors i will probaly fix ittttt)
 ```lua
 local libraryCode = game:HttpGet("https://raw.githubusercontent.com/Underssky/ColoredPrintsLib/refs/heads/main/ColorPLibrary.luau")
 local PLib = loadstring(libraryCode)()
